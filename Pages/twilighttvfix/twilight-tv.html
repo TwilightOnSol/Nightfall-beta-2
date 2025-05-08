@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <title>Twilight TV</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Arial', sans-serif;
+            color: #1E90FF;
+        }
+        #content {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #player {
+            width: 80vw;
+            height: 80vh;
+            max-width: 1280px;
+            max-height: 720px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <div id="player"></div>
+    </div>
+
+    <script>
+        const body = document.body;
+
+        // List of YouTube video IDs
+        const videoIds = [
+            "dEfzHBlRurw",
+	    "ubOo3NEA4rA",
+	    "J75GuCvhLAE",
+	    "0SOPvIiig2o",
+	    "0qnmNFoe7AY", 
+	    "Pd4LyXbqcf0",
+	    "_xBkp9fslQE"
+
+
+        ];
+
+        // Colors for gradient stops
+        const colors = [
+            '0,0,0',       // black rgb(0,0,0)
+            '30,144,255',  // dodger blue rgb(30,144,255)
+            '65,105,225',  // royal blue rgb(65,105,225)
+            '0,0,0'        // black rgb(0,0,0)
+        ];
+
+        let step = 0;
+        const gradientSpeed = 0.005;
+        let angle = 90;
+        let player;
+
+        function lerp(a, b, t) {
+            return a + (b - a) * t;
+        }
+
+        function interpolateColor(color1, color2, t) {
+            const c1 = color1.split(',').map(Number);
+            const c2 = color2.split(',').map(Number);
+            const r = Math.round(lerp(c1[0], c2[0], t));
+            const g = Math.round(lerp(c1[1], c2[1], t));
+            const b = Math.round(lerp(c1[2], c2[2], t));
+            return `rgb(${r},${g},${b})`;
+        }
+
+        function updateGradient() {
+            const c0 = Math.floor(step) % colors.length;
+            const c1 = (c0 + 1) % colors.length;
+            const c2 = (c0 + 2) % colors.length;
+            const c3 = (c0 + 3) % colors.length;
+
+            const t = step - Math.floor(step);
+            const color1 = interpolateColor(colors[c0], colors[c1], t);
+            const color2 = interpolateColor(colors[c2], colors[c3], t);
+
+            body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+
+            step += gradientSpeed;
+            if (step > colors.length) step -= colors.length;
+
+            requestAnimationFrame(updateGradient);
+        }
+
+        document.addEventListener('mousemove', (event) => {
+            const { clientX, clientY } = event;
+            const { innerWidth, innerHeight } = window;
+
+            // Calculate angle based on cursor position
+            angle = Math.atan2(clientY - innerHeight / 2, clientX - innerWidth / 2) * (180 / Math.PI) + 180;
+        });
+
+        // Load YouTube IFrame Player API
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // Initialize player when API is ready
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
+                videoId: getRandomVideo(),
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 1,
+                    'mute': 0
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                // Load and play a new random video when the current one ends
+                const newVideoId = getRandomVideo();
+                player.loadVideoById(newVideoId);
+                player.playVideo(); // Ensure the new video starts playing immediately
+            }
+        }
+
+        function getRandomVideo() {
+            const randomIndex = Math.floor(Math.random() * videoIds.length);
+            return videoIds[randomIndex];
+        }
+
+        updateGradient();
+    </script>
+</body>
+</html>

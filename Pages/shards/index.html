@@ -1,0 +1,101 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="/images/icon.jpeg" />
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <title>$Shards Token</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Arial', sans-serif;
+            color: #1E90FF;
+        }
+        #content {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        iframe {
+            width: 130vh; /* Same width as the original widget */
+            height: 85vh; /* Same height as the original widget */
+            border: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <iframe src="https://dexscreener.com/solana/EsUAux2oRr3Xsk3Ta6i399738vMUCMRJ3yyPERSDiFY4?embed=1&loadChartSettings=0&trades=0&chartLeftToolbar=0&chartTheme=dark&theme=dark&chartStyle=0&chartType=usd&interval=15"></iframe>
+    </div>
+
+    <script>
+        const body = document.body;
+
+        // colors for gradient stops
+        const colors = [
+            '0,0,0',       // black rgb(0,0,0)
+            '30,144,255',  // dodger blue rgb(30,144,255)
+            '65,105,225',  // royal blue rgb(65,105,225)
+            '0,0,0'        // black rgb(0,0,0)
+        ];
+
+        let step = 0;
+        const gradientSpeed = 0.005;
+        let angle = 90;
+
+        function lerp(a, b, t) {
+            return a + (b - a) * t;
+        }
+
+        function interpolateColor(color1, color2, t) {
+            const c1 = color1.split(',').map(Number);
+            const c2 = color2.split(',').map(Number);
+            const r = Math.round(lerp(c1[0], c2[0], t));
+            const g = Math.round(lerp(c1[1], c2[1], t));
+            const b = Math.round(lerp(c1[2], c2[2], t));
+            return `rgb(${r},${g},${b})`;
+        }
+
+        function updateGradient() {
+            const c0 = Math.floor(step) % colors.length;
+            const c1 = (c0 + 1) % colors.length;
+            const c2 = (c0 + 2) % colors.length;
+            const c3 = (c0 + 3) % colors.length;
+
+            const t = step - Math.floor(step);
+            const color1 = interpolateColor(colors[c0], colors[c1], t);
+            const color2 = interpolateColor(colors[c2], colors[c3], t);
+
+            body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+
+            step += gradientSpeed;
+            if (step > colors.length) step -= colors.length;
+
+            requestAnimationFrame(updateGradient);
+        }
+
+        document.addEventListener('mousemove', (event) => {
+            const { clientX, clientY } = event;
+            const { innerWidth, innerHeight } = window;
+
+            // Calculate angle based on cursor position
+            angle = Math.atan2(clientY - innerHeight / 2, clientX - innerWidth / 2) * (180 / Math.PI) + 180;
+        });
+
+        updateGradient();
+    </script>
+</body>
+</html>

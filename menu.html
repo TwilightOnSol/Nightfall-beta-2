@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shadow Realm</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            color: #1E90FF;
+            text-align: center;
+            background: linear-gradient(90deg, rgb(0,0,0), rgb(30,144,255));
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(30, 144, 255, 0.8);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 150px);
+            grid-template-rows: repeat(4, 150px);
+            gap: 20px;
+            justify-content: center;
+            align-content: center;
+        }
+
+        .channel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #1E90FF;
+            border-radius: 15px;
+            color: #1E90FF;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-shadow: 0 0 6px rgba(30, 144, 255, 0.6);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .channel:hover {
+            background: #1E90FF;
+            color: #000000;
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 8px 20px rgba(30, 144, 255, 0.6);
+        }
+
+        .channel:active {
+            transform: scale(1) translateY(0);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .channel.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .channel.disabled:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #1E90FF;
+            transform: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .error-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #1E90FF;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .error-container h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(30, 144, 255, 0.8);
+        }
+
+        .error-container p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .error-container a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #1E90FF;
+            color: #000000;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .error-container a:hover {
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 8px 20px rgba(30, 144, 255, 0.6);
+        }
+
+        .error-container a:active {
+            transform: scale(1) translateY(0);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="errorContainer" class="error-container">
+        <h2>Access Denied</h2>
+        <p>You must be logged in to access this page.</p>
+        <a href="dashboard.html">Go to Login</a>
+    </div>
+
+    <div id="mainContent" class="hidden">
+        <h1>Shadow Realm</h1>
+        <div class="menu-grid">
+            <a href="index.html" class="channel">Home</a>
+            <a href="Pages/TwiLaunch/index.html" class="channel">Game Launcher</a>
+            <a href="Pages/mc-rip/shadow.html" class="channel">Shadow Client (Minecraft)</a>
+            <a href="Pages/dizzy/index.html" class="channel">Discord Server</a>
+            <a href="Pages/mine-stat/index.html" class="channel">Solo Mining Stats</a>
+            <a href="Pages/shards/index.html" class="channel">$Shards Token</a>
+            <a href="Pages/twilighttvfix/twilight-tv.html" class="channel">Twilight TV</a>
+            <div class="channel disabled">Coming Soon</div>
+            <div class="channel disabled">Coming Soon</div>
+            <div class="channel disabled">Coming Soon</div>
+            <div class="channel disabled">Coming Soon</div>
+            <div class="channel disabled">Coming Soon</div>
+            <div class="channel disabled">Coming Soon</div>
+            <div class="channel disabled">Coming Soon</div>
+            <div class="channel disabled">Coming Soon</div>
+            <div class="channel disabled">Coming Soon</div>
+        </div>
+    </div>
+
+    <script>
+        // Check login status and toggle content
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const errorContainer = document.getElementById('errorContainer');
+        const mainContent = document.getElementById('mainContent');
+
+        if (isLoggedIn) {
+            errorContainer.style.display = 'none';
+            mainContent.classList.remove('hidden');
+        } else {
+            errorContainer.style.display = 'block';
+            mainContent.classList.add('hidden');
+        }
+
+        // Gradient animation
+        const body = document.body;
+        const colors = ['0,0,0', '30,144,255', '65,105,225', '0,0,0'];
+        let step = 0;
+        const gradientSpeed = 0.005;
+        let angle = 90;
+
+        function lerp(a, b, t) {
+            return a + (b - a) * t;
+        }
+
+        function interpolateColor(color1, color2, t) {
+            const c1 = color1.split(',').map(Number);
+            const c2 = color2.split(',').map(Number);
+            const r = Math.round(lerp(c1[0], c2[0], t));
+            const g = Math.round(lerp(c1[1], c2[1], t));
+            const b = Math.round(lerp(c1[2], c2[2], t));
+            return `rgb(${r},${g},${b})`;
+        }
+
+        function updateGradient() {
+            const c0 = Math.floor(step) % colors.length;
+            const c1 = (c0 + 1) % colors.length;
+            const c2 = (c0 + 2) % colors.length;
+            const c3 = (c0 + 3) % colors.length;
+
+            const t = step - Math.floor(step);
+            const color1 = interpolateColor(colors[c0], colors[c1], t);
+            const color2 = interpolateColor(colors[c2], colors[c3], t);
+
+            body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+
+            step += gradientSpeed;
+            if (step > colors.length) step -= colors.length;
+
+            requestAnimationFrame(updateGradient);
+        }
+
+        document.addEventListener('mousemove', (event) => {
+            const { clientX, clientY } = event;
+            const { innerWidth, innerHeight } = window;
+            angle = Math.atan2(clientY - innerHeight / 2, clientX - innerWidth / 2) * (180 / Math.PI) + 180;
+        });
+
+        updateGradient();
+    </script>
+    <script>
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+            return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+            if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+                try {
+                    var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                    var firstSheetName = workbook.SheetNames[0];
+                    var worksheet = workbook.Sheets[firstSheetName];
+
+                    // Convert sheet to JSON to filter blank rows
+                    var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                    // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                    var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                    // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                    var headerRowIndex = filteredData.findIndex((row, index) =>
+                        row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                    );
+                    // Fallback
+                    if (headerRowIndex === -1 || headerRowIndex > 25) {
+                        headerRowIndex = 0;
+                    }
+
+                    // Convert filtered JSON back to CSV
+                    var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                    csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                    return csv;
+                } catch (e) {
+                    console.error(e);
+                    return "";
+                }
+            }
+            return gk_fileData[filename] || "";
+        }
+    </script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93c4fa5e88ac53f2',t:'MTc0NjY2NTU4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>
